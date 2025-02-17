@@ -68,8 +68,28 @@ import streamlit as st
 def database_ai_agent():
     st.subheader("Database AI Agent with LangChain")
 
-    st.write("### Dataset Preview")
-    st.write(df.head())
+    st.subheader("Upload CSV File")
+    uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+
+    if uploaded_file is not None:
+        # Save the uploaded file to the data directory
+        file_path = os.path.join("data", uploaded_file.name)
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+
+        # Load the uploaded CSV into a DataFrame
+        df = pd.read_csv(file_path).fillna(value=0)
+
+        st.write("### Dataset Preview")
+        st.write(df.head())
+
+        # Create a new agent with the uploaded DataFrame
+        agent = create_pandas_dataframe_agent(
+            llm=model,
+            df=df,
+            handle_parsing_errors=True,
+            verbose=True,
+        )
 
 # User input for the question
     st.write("### Ask a Question")
@@ -87,7 +107,7 @@ def database_ai_agent():
 
 def main():
     st.sidebar.title("Navigation")
-    app_mode = st.sidebar.selectbox("Choose the app mode", ["Upload CSV", "CSV Agent", "SQL Agent"])
+    app_mode = st.sidebar.selectbox("Choose the app mode", ["SQL Agent", "CSV Agent"])
 
     if app_mode == "Upload CSV":
         st.write("Upload CSV functionality goes here.")
