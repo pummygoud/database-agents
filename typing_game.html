@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #sentence span {
+            background-color: yellow;
+        }
+        #sentence {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        #inputField {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        #wpm {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Typing Game</h1>
+    <div id="sentence"></div>
+    <input type="text" id="inputField" placeholder="Start typing..." autofocus>
+    <div id="wpm">WPM: 0</div>
+    <div id="results"></div>
+
+    <script>
+        const paragraphs = [
+            "Once upon a time, in a land far away, there was a small village nestled between the mountains and the sea. The villagers lived a simple life, fishing in the ocean and farming the fertile land. Every year, they celebrated the harvest with a grand festival, where stories were told, and songs were sung.",
+            "In the heart of the village stood an ancient tree, its branches stretching high into the sky. The villagers believed it was a magical tree, and they often gathered beneath its shade to share tales of old. Children played around its trunk, and the elders sat on the benches, reminiscing about the past.",
+            "One day, a traveler arrived in the village, carrying a mysterious box. He claimed it contained a treasure from a distant land, and the villagers were eager to see what lay inside. As the traveler opened the box, a bright light filled the air, and the villagers gasped in awe at the sight before them."
+        ];
+
+        let currentSentence = "";
+        let startTime;
+        let typedCharacters = 0;
+        let correctCharacters = 0;
+
+        function startGame() {
+            currentSentence = paragraphs.shift();
+            if (!currentSentence) {
+                paragraphs.push(...[
+                    "Once upon a time, in a land far away, there was a small village nestled between the mountains and the sea. The villagers lived a simple life, fishing in the ocean and farming the fertile land. Every year, they celebrated the harvest with a grand festival, where stories were told, and songs were sung.",
+                    "In the heart of the village stood an ancient tree, its branches stretching high into the sky. The villagers believed it was a magical tree, and they often gathered beneath its shade to share tales of old. Children played around its trunk, and the elders sat on the benches, reminiscing about the past.",
+                    "One day, a traveler arrived in the village, carrying a mysterious box. He claimed it contained a treasure from a distant land, and the villagers were eager to see what lay inside. As the traveler opened the box, a bright light filled the air, and the villagers gasped in awe at the sight before them."
+                ]);
+                currentSentence = paragraphs.shift();
+            }
+            const sentenceElement = document.getElementById("sentence");
+            sentenceElement.innerHTML = currentSentence.split('').map((char, index) => `<span id="char-${index}">${char}</span>`).join('');
+            document.getElementById("inputField").value = "";
+            document.getElementById("results").textContent = "";
+            startTime = new Date();
+            typedCharacters = 0;
+            correctCharacters = 0;
+        }
+
+        document.getElementById("inputField").addEventListener("input", function() {
+            const input = this.value;
+            const currentTime = new Date();
+            const timeElapsed = (currentTime - startTime) / 1000 / 60; // in minutes
+            const wordsPerMinute = (input.split(" ").length / timeElapsed);
+            document.getElementById("wpm").textContent = `WPM: ${wordsPerMinute.toFixed(2)}`;
+
+            typedCharacters = input.length;
+            correctCharacters = 0;
+            correctCharacters = 0;
+
+            for (let i = 0; i < input.length; i++) {
+                if (input[i] === currentSentence[i]) {
+                    correctCharacters++;
+                    document.getElementById(`char-${i}`).style.backgroundColor = "lightgreen";
+            }
+
+            for (let i = correctCharacters; i < currentSentence.length; i++) {
+                document.getElementById(`char-${i}`).style.backgroundColor = "transparent";
+            }
+            }
+
+            if (input === currentSentence) {
+                const endTime = new Date();
+                const timeTaken = (endTime - startTime) / 1000; // in seconds
+                const wordsPerMinute = (currentSentence.split(" ").length / timeTaken) * 60;
+                const accuracy = (correctCharacters / currentSentence.length) * 100;
+
+                document.getElementById("results").innerHTML = `
+                    <p>Time taken: ${timeTaken.toFixed(2)} seconds</p>
+                    <p>Words per minute: ${wordsPerMinute.toFixed(2)}</p>
+                    <p>Accuracy: ${accuracy.toFixed(2)}%</p>
+                `;
+                startGame();
+            }
+        });
+
+        startGame();
+    </script>
+</body>
+</html>
