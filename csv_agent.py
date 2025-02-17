@@ -91,19 +91,21 @@ def database_ai_agent():
             verbose=True,
         )
 
-# User input for the question
-    st.write("### Ask a Question")
-    question = st.text_input(
-        "Enter your question about the dataset:",
-        "Which grade has the highest average base salary, and compare the average female pay vs male pay?",
-    )
+        # User input for the question
+        st.write("### Ask a Question")
+        question = st.text_input(
+            "Enter your question about the dataset:",
+            "Which grade has the highest average base salary, and compare the average female pay vs male pay?",
+        )
 
-# Run the agent and display the result
-    if st.button("Run Query"):
-        QUERY = CSV_PROMPT_PREFIX + question + CSV_PROMPT_SUFFIX
-        res = agent.invoke(QUERY)
-        st.write("### Final Answer")
-        st.markdown(res["output"])
+        # Run the agent and display the result
+        if st.button("Run Query"):
+            QUERY = CSV_PROMPT_PREFIX + question + CSV_PROMPT_SUFFIX
+            res = agent.invoke(QUERY)
+            st.write("### Final Answer")
+            st.markdown(res["output"])
+    else:
+        st.info("Please upload a CSV file to get started.")
 
 def main():
     st.sidebar.title("Navigation")
