@@ -118,7 +118,7 @@ SELECT [salary] FROM xyztable WHERE department = 'IGM' AND date LIKE '2020%'"
 db = SQLDatabase.from_uri(f"sqlite:///{database_file_path}")
 toolkit = SQLDatabaseToolkit(db=db, llm=model)
 
-QUESTION = """show list of all tables with their row counts?"
+QUESTION = """show the list of all tables?"
 """
 sql_agent = create_sql_agent(
     prefix=MSSQL_AGENT_PREFIX,
@@ -136,15 +136,22 @@ sql_agent = create_sql_agent(
 import streamlit as st
 
 def sql_ai_agent():
-    st.subheader("SQL Query AI Agent")
+    st.title("SQL Query AI Chat")
+    st.markdown("Welcome to the SQL Query AI Chat! For the below datamodel, ask your questions below.")
+    st.markdown(
+        '<iframe src="https://www.sqlitetutorial.net/wp-content/uploads/2018/03/sqlite-sample-database-diagram-color.pdf#toolbar=0&view=FitV" width="100%" height="600px"></iframe>',
+        unsafe_allow_html=True,
+    )
 
     # Initialize chat history
     if "history" not in st.session_state:
         st.session_state["history"] = []
 
+    st.markdown("---")
+
     question = st.text_input("Enter your query:", key="sql_query_input")
 
-    if st.button("Run Query"):
+    if st.button("Send"):
         if question:
             res = sql_agent.invoke(question)
             response = res["output"]
@@ -156,24 +163,14 @@ def sql_ai_agent():
             for entry in st.session_state["history"]:
                 st.markdown(f"**User:** {entry['question']}")
                 st.markdown(f"**Agent:** {entry['response']}")
+                st.markdown("---")
         else:
             st.error("Please enter a query.")
-    st.subheader("SQL Query AI Agent")
-
-    question = st.text_input("Enter your query:")
-
-    if st.button("Run Query"):
-        if question:
-            res = sql_agent.invoke(question)
-
-            st.markdown(res["output"])
-    else:
-        st.error("Please enter a query.")
 
 
 def main():
     st.sidebar.title("Navigation")
-    app_mode = st.sidebar.selectbox("Choose the app mode", ["Upload CSV", "CSV Agent", "SQL Agent"])
+    app_mode = st.sidebar.selectbox("Choose the app mode", ["SQL Agent", "Upload CSV", "CSV Agent"])
 
     if app_mode == "Upload CSV":
         print("Upload CSV functionality goes here.")
