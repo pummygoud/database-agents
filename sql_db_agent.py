@@ -118,7 +118,7 @@ SELECT [salary] FROM xyztable WHERE department = 'IGM' AND date LIKE '2020%'"
 db = SQLDatabase.from_uri(f"sqlite:///{database_file_path}")
 toolkit = SQLDatabaseToolkit(db=db, llm=model)
 
-QUESTION = """what is the highest average salary by department, and give me the number?"
+QUESTION = """show list of all tables with their row counts?"
 """
 sql_agent = create_sql_agent(
     prefix=MSSQL_AGENT_PREFIX,
